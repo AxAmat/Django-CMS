@@ -11,7 +11,7 @@ from xml.etree import ElementTree as ET
 import datetime
 
 
-#@cache_page(60 * 60 * 12)
+#@cache_page(60 * 15)
 class WeatherPlugin(CMSPluginBase):
     model = CMSPlugin
     module = _('Weather Plugin')
@@ -48,7 +48,9 @@ class WeatherPlugin(CMSPluginBase):
                     if v.isdigit(): i[k] = int(v)
 
         except Exception as e:
-            weather_list['e'] = e
+            # заглушка для шаблона
+            weather_list['except'] = True
+            # логируем тип ошибки и время
             log_time = datetime.datetime.now()
             log = open('/home/azimuth/.env/django/new/project/mysite/app/weather_log.xml','a')
             log.write('{} : {}\n'.format(str(e), str(log_time.strftime("%d.%m.%Y %H:%M:%S"))))
