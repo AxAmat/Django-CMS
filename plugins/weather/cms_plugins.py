@@ -3,12 +3,13 @@
 import datetime
 import logging
 import traceback
+from urllib2 import urlopen
+from xml.etree import ElementTree as ET
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 from cms.models.pluginmodel import CMSPlugin
 from django.utils.translation import ugettext_lazy as _
-from urllib2 import urlopen
-from xml.etree import ElementTree as ET
+
 
 logging.basicConfig(
     filename = 'mysite/app/weather.log',
