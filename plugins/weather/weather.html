@@ -1,7 +1,16 @@
 {% block content %}
+{% load cache %}
+{% cache 43200 weather %}
 
-{% if instance %}
+{% if instance.except %}
+На сегодня погоды нет ☹<br>
+<small>
+  Информация для специалистов:<br>
+  {{ instance.e }}
+</small>
+{% else %}
 <div class="grey_font">
+  {{ instance.er }}
   {% if instance.HEAT.min > 15 %}☺{% else %}☹{% endif %} Средняя температура: {{ instance.HEAT.min }} °С<br>
   ➜ Средняя скорость ветра: {{ instance.WIND.min }} - {{ instance.WIND.max }} м/с<br>
   ⚖ Атмосферное давление: {{ instance.PRESSURE.max }} мм.рт.с<br>
@@ -15,4 +24,5 @@
 </div>
 {% endif %}
 
+{% endcache %}
 {% endblock content %}
