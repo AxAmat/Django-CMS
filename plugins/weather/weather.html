@@ -1,0 +1,18 @@
+{% block content %}
+
+{% if instance %}
+<div class="grey_font">
+  {% if instance.HEAT.min > 15 %}☺{% else %}☹{% endif %} Средняя температура: {{ instance.HEAT.min }} °С<br>
+  ➜ Средняя скорость ветра: {{ instance.WIND.min }} - {{ instance.WIND.max }} м/с<br>
+  ⚖ Атмосферное давление: {{ instance.PRESSURE.max }} мм.рт.с<br>
+  {% if instance.PHENOMENA.precipitation > 8 %}
+  ☀ Без осадков
+  {% elif instance.PHENOMENA.precipitation == 5 or  instance.PHENOMENA.precipitation == 8 %}
+  ⛈ Ливень с грозой
+  {% else %}
+  ☔ Ожидается дождь
+  {% endif %}
+</div>
+{% endif %}
+
+{% endblock content %}
