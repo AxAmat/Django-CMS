@@ -1,21 +1,38 @@
 # -*- coding: utf-8 -*-
 
-import datetime
+"""
+Created on 04.08.2016
+:author: Алексей
+
+Плагин погоды
+"""
+
 import logging
 import traceback
+
 from urllib2 import urlopen
 from xml.etree import ElementTree as ET
+
+from django.utils.translation import ugettext_lazy as _
+
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
 from cms.models.pluginmodel import CMSPlugin
-from django.utils.translation import ugettext_lazy as _
 
 
 logging.basicConfig(
-    filename = 'mysite/app/weather.log',
-    level = logging.ERROR,
+    filename='blog/weather.log',
+    level=logging.ERROR,
     format='%(asctime)s - %(levelname)s - %(message)s'
-    )
+)
+
+"""
+URL - адрес источника данных о погоде;
+KEYS - список ключей, для формирования словаря с параметрами погодных условий.
+"""
+
+URL = 'http://xml.meteoservice.ru/export/gismeteo/point/112.xml'
+KEYS = ['HEAT', 'PRESSURE', 'WIND', 'PHENOMENA']
 
 
 class WeatherPlugin(CMSPluginBase):
@@ -26,34 +43,35 @@ class WeatherPlugin(CMSPluginBase):
     cache = True
 
     def render(self, context, instance, placeholder):
+
         weather_list = {}
-        url = 'http://xml.meteoservice.ru/export/gismeteo/point/112.xml'
-        weather_xml = 'mysite/app/weather.xml'
+
+        """
+        Парсим содержимое URL, в ходе итерации добавляем в словарь значения, соответствующие ключам сз списка KEYS.
+        В случае несоответствия длины словаря ожидаемому результату (4), выбрасываем KeyError.
+        Меняем строковое представление чисел на int.
+        """
+
         try:
-            output_file = open(weather_xml,'w')
-            input_url = urlopen(url)
-            input_url_content = input_url.read()
-            output_file.write(input_url_content)
-            output_file.close()
-            parse_file = open(weather_xml, 'r')
-            tree = ET.parse(parse_file)
-            root = tree.getroot()
-            parse_file.close()
+            input_url = urlopen(URL)
+            root = ET.fromstring(input_url.read())
 
             for child in root.iter():
-                weather_list[child.tag] = child.attrib
+                if child.tag in KEYS:
+                    weather_list[child.tag] = child.attrib
 
-            try:
-                weather_list['HEAT']
-                weather_list['PRESSURE']
-                weather_list['WIND']
-                weather_list['PHENOMENA']
-            except (KeyError, AttributeError) as e:
-                raise Exception(e)
+            if len(weather_list) < 4:
+                raise KeyError
 
             for i in weather_list.values():
                 for k, v in i.items():
-                    if v.isdigit(): i[k] = int(v)
+                    if v.isdigit():
+                        i[k] = int(v)
+
+            """
+            В случае вощникновения исключительных ситуаций, объект исключения передаётся
+            в шаблон и логируется в файл blog/weather.log
+            """
 
         except Exception as e:
             weather_list['except'] = e
@@ -63,4 +81,3 @@ class WeatherPlugin(CMSPluginBase):
         return context
 
 plugin_pool.register_plugin(WeatherPlugin)
-
