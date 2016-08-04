@@ -67,7 +67,7 @@ class WeatherPlugin(CMSPluginBase):
 
             """
             При возникновении исключительных ситуаций, объект исключения передаётся
-            в шаблон и логируется в файл blog/weather.log
+            в шаблон для отображения "заглушки" и логируется в файл blog/weather.log
             """
 
         except Exception as e:
