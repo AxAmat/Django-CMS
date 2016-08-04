@@ -3,10 +3,8 @@
 """
 Created on 04.08.2016
 :author: Алексей
-
 Плагин погоды
 """
-
 
 import logging
 import traceback
