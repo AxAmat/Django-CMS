@@ -7,6 +7,7 @@ Created on 04.08.2016
 Плагин погоды
 """
 
+
 import logging
 import traceback
 
@@ -56,9 +57,7 @@ class WeatherPlugin(CMSPluginBase):
             input_url = urlopen(URL)
             root = ET.fromstring(input_url.read())
 
-            for child in root.iter():
-                if child.tag in KEYS:
-                    weather_list[child.tag] = child.attrib
+            weather_list = {child.tag: child.attrib for child in root.iter() if child.tag in KEYS}
 
             if len(weather_list) < 4:
                 raise KeyError
