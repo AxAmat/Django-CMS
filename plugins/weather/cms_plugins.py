@@ -52,7 +52,8 @@ class WeatherPlugin(CMSPluginBase):
         """
 
         try:
-            root = ET.fromstring(urlopen(URL).read())
+            input_url = urlopen(URL)
+            root = ET.fromstring(input_url.read())
             weather_list = {child.tag: child.attrib for child in root.iter() if child.tag in KEYS}
 
             if len(weather_list) < 4:
